@@ -30,6 +30,14 @@ def parse_args():
     parser.add_argument("--cols", type=int, default=11)
     parser.add_argument("--rows", type=int, default=8)
     parser.add_argument("--square-size", type=float, default=0.025)
+    parser.add_argument(
+        "--robot-samples", type=int, default=10,
+        help="O_T_EE readings saved for each image (default: 10)",
+    )
+    parser.add_argument(
+        "--robot-sample-interval-ms", type=float, default=10.0,
+        help="Delay between O_T_EE readings (default: 10 ms)",
+    )
     return parser.parse_args()
 
 
@@ -51,6 +59,40 @@ def read_robot_matrix(process):
     return matrix, (request_ns + response_ns) // 2, response_ns - request_ns
 
 
+def rotation_distance(left, right):
+    relative = left[:3, :3].T @ right[:3, :3]
+    cosine = np.clip((np.trace(relative) - 1.0) / 2.0, -1.0, 1.0)
+    return float(np.arccos(cosine))
+
+
+def representative_pose_index(matrices):
+    """Return the SE(3) medoid index, robust against an occasional stale read."""
+    scores = []
+    for candidate in matrices:
+        score = 0.0
+        for other in matrices:
+            translation_error = np.linalg.norm(candidate[:3, 3] - other[:3, 3])
+            rotation_error = rotation_distance(candidate, other)
+            score += translation_error + 0.05 * rotation_error
+        scores.append(score)
+    return int(np.argmin(scores))
+
+
+def read_robot_pose_batch(process, count, interval_seconds):
+    matrices = []
+    timestamps = []
+    durations = []
+    for sample_index in range(count):
+        matrix, timestamp_ns, duration_ns = read_robot_matrix(process)
+        matrices.append(matrix)
+        timestamps.append(timestamp_ns)
+        durations.append(duration_ns)
+        if sample_index + 1 < count and interval_seconds > 0:
+            time.sleep(interval_seconds)
+    representative = representative_pose_index(matrices)
+    return matrices, timestamps, durations, representative
+
+
 def write_manifest(path, args, samples):
     payload = {
         "schema_version": 1,
@@ -62,6 +104,9 @@ def write_manifest(path, args, samples):
         "image_size": [args.width, args.height],
         "checkerboard_inner_corners": [args.cols, args.rows],
         "square_size_m": args.square_size,
+        "robot_samples_per_image": args.robot_samples,
+        "robot_sample_interval_ms": args.robot_sample_interval_ms,
+        "representative_pose_method": "SE3_medoid",
         "samples": samples,
     }
     temporary = path.with_suffix(".json.tmp")
@@ -71,6 +116,10 @@ def write_manifest(path, args, samples):
 
 def main():
     args = parse_args()
+    if args.robot_samples < 1:
+        raise ValueError("--robot-samples must be at least 1")
+    if args.robot_sample_interval_ms < 0:
+        raise ValueError("--robot-sample-interval-ms cannot be negative")
     bridge = args.bridge.expanduser().resolve()
     if not bridge.is_file():
         raise FileNotFoundError(f"Franka bridge not found: {bridge}")
@@ -162,7 +211,12 @@ def main():
                 print("Not saved: all checkerboard corners must be detected")
                 continue
 
-            robot_matrix, robot_timestamp_ns, request_duration_ns = read_robot_matrix(process)
+            matrices, timestamps_ns, durations_ns, representative_index = read_robot_pose_batch(
+                process,
+                args.robot_samples,
+                args.robot_sample_interval_ms / 1000.0,
+            )
+            robot_matrix = matrices[representative_index]
             index = len(samples)
             image_name = f"sample_{index:03d}.png"
             image_path = image_dir / image_name
@@ -172,9 +226,13 @@ def main():
                 "index": index,
                 "image": str(Path("images") / image_name),
                 "captured_at": datetime.now().astimezone().isoformat(timespec="microseconds"),
-                "robot_timestamp_ns": robot_timestamp_ns,
-                "robot_request_duration_ns": request_duration_ns,
+                "robot_timestamp_ns": timestamps_ns[representative_index],
+                "robot_request_duration_ns": durations_ns[representative_index],
                 "base_T_EE": robot_matrix.tolist(),
+                "base_T_EE_representative_index": representative_index,
+                "base_T_EE_samples": [matrix.tolist() for matrix in matrices],
+                "robot_timestamps_ns": timestamps_ns,
+                "robot_request_durations_ns": durations_ns,
             })
             write_manifest(manifest_path, args, samples)
             print(f"Saved sample {index}: {image_path}")
