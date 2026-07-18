@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg"
+     xmlns:xlink="http://www.w3.org/1999/xlink"
+     width="210mm" height="297mm" viewBox="0 0 210 297">
+  <rect width="210" height="297" fill="white"/>
+
+  <!--
+    Official AprilRobotics tag36h11 ID 0 image.
+    The complete image is 10 x 10 modules, including one white quiet-zone
+    module on every side. The black tag boundary is 8 x 8 modules.
+    At 15 mm/module, the black boundary is exactly 120 mm.
+  -->
+  <image x="30" y="36" width="150" height="150"
+         image-rendering="pixelated"
+         style="image-rendering:pixelated;image-rendering:crisp-edges"
+         preserveAspectRatio="none"
+         xlink:href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAoAAAAKCAYAAACNMs+9AAAAOElEQVR4XmP4TyRgABMMDHgxikK4TpgEOg3jICtGUYBPIUGrkWmcCtEVY4gjC6BrIKgQHcMVEgMAd4//AS6wxqoAAAAASUVORK5CYII="/>
+
+  <text x="105" y="202" font-family="sans-serif" font-size="5"
+        text-anchor="middle" fill="black">AprilTag tag36h11 · ID 0</text>
+  <text x="105" y="210" font-family="sans-serif" font-size="4"
+        text-anchor="middle" fill="black">黑色外边框：120 mm（打印时选择“实际尺寸 / 100%”）</text>
+
+  <!-- 100 mm print verification line -->
+  <line x1="55" y1="230" x2="155" y2="230" stroke="black" stroke-width="0.5"/>
+  <line x1="55" y1="227" x2="55" y2="233" stroke="black" stroke-width="0.5"/>
+  <line x1="155" y1="227" x2="155" y2="233" stroke="black" stroke-width="0.5"/>
+  <text x="105" y="239" font-family="sans-serif" font-size="4"
+        text-anchor="middle" fill="black">校验线：100 mm</text>
+
+  <text x="105" y="258" font-family="sans-serif" font-size="3.5"
+        text-anchor="middle" fill="black">打印后先测量校验线，再测量黑色正方形外边框。</text>
+  <text x="105" y="264" font-family="sans-serif" font-size="3.5"
+        text-anchor="middle" fill="black">检测程序 tag_size 请填写黑色外边框的实测尺寸（单位：米）。</text>
+</svg>

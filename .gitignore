@@ -1,0 +1,9 @@
+__pycache__/
+*.py[cod]
+
+# Captured calibration datasets can be large and are machine-specific.
+calibration_images/
+
+# Generated calibration results should be reviewed before versioning.
+calibration_output/
+
