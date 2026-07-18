@@ -3,6 +3,7 @@
 
 import argparse
 import json
+import re
 from pathlib import Path
 
 import cv2
@@ -74,10 +75,9 @@ def main():
     if len(accepted) < 20:
         raise SystemExit("Fewer than 20 valid images; collect more diverse images")
 
-    K = np.zeros((3, 3), dtype=np.float64)
-    D = np.zeros((4, 1), dtype=np.float64)
     flags = (
-        cv2.fisheye.CALIB_RECOMPUTE_EXTRINSIC
+        cv2.fisheye.CALIB_USE_INTRINSIC_GUESS
+        | cv2.fisheye.CALIB_RECOMPUTE_EXTRINSIC
         | cv2.fisheye.CALIB_CHECK_COND
         | cv2.fisheye.CALIB_FIX_SKEW
     )
@@ -87,17 +87,46 @@ def main():
         1e-9,
     )
 
-    rms, K, D, rvecs, tvecs = cv2.fisheye.calibrate(
-        object_points,
-        image_points,
-        image_size,
-        K,
-        D,
-        None,
-        None,
-        flags=flags,
-        criteria=criteria,
-    )
+    while True:
+        # OpenCV's fisheye initializer can fail on near-circular, very-wide-FoV
+        # images when starting from an all-zero K. Obtain a robust pinhole
+        # estimate only as an initialization, then optimize the fisheye model.
+        pinhole_objects = [
+            obj.reshape(-1, 3).astype(np.float32) for obj in object_points
+        ]
+        pinhole_images = [
+            img.reshape(-1, 1, 2).astype(np.float32) for img in image_points
+        ]
+        _, K, _, _, _ = cv2.calibrateCamera(
+            pinhole_objects, pinhole_images, image_size, None, None
+        )
+        K = K.astype(np.float64)
+        D = np.zeros((4, 1), dtype=np.float64)
+        try:
+            rms, K, D, rvecs, tvecs = cv2.fisheye.calibrate(
+                object_points,
+                image_points,
+                image_size,
+                K,
+                D,
+                None,
+                None,
+                flags=flags,
+                criteria=criteria,
+            )
+            break
+        except cv2.error as exc:
+            match = re.search(r"input array (\d+)", str(exc))
+            if not match:
+                raise
+            bad_index = int(match.group(1))
+            bad_path = accepted.pop(bad_index)
+            object_points.pop(bad_index)
+            image_points.pop(bad_index)
+            rejected.append({"file": str(bad_path), "reason": "ill_conditioned_view"})
+            print(f"Removed ill-conditioned view: {bad_path}")
+            if len(accepted) < 20:
+                raise SystemExit("Too few valid images after removing unstable views")
 
     per_view = []
     all_squared_error = 0.0
