@@ -38,6 +38,10 @@ def parse_args():
         "--robot-sample-interval-ms", type=float, default=10.0,
         help="Delay between O_T_EE readings (default: 10 ms)",
     )
+    parser.add_argument(
+        "--discard-robot-reads", type=int, default=1,
+        help="Warm-up reads discarded before saving the pose batch (default: 1)",
+    )
     return parser.parse_args()
 
 
@@ -106,6 +110,7 @@ def write_manifest(path, args, samples):
         "square_size_m": args.square_size,
         "robot_samples_per_image": args.robot_samples,
         "robot_sample_interval_ms": args.robot_sample_interval_ms,
+        "discarded_robot_reads_before_batch": args.discard_robot_reads,
         "representative_pose_method": "SE3_medoid",
         "samples": samples,
     }
@@ -120,6 +125,8 @@ def main():
         raise ValueError("--robot-samples must be at least 1")
     if args.robot_sample_interval_ms < 0:
         raise ValueError("--robot-sample-interval-ms cannot be negative")
+    if args.discard_robot_reads < 0:
+        raise ValueError("--discard-robot-reads cannot be negative")
     bridge = args.bridge.expanduser().resolve()
     if not bridge.is_file():
         raise FileNotFoundError(f"Franka bridge not found: {bridge}")
@@ -210,6 +217,13 @@ def main():
             if not found:
                 print("Not saved: all checkerboard corners must be detected")
                 continue
+
+            # The first read after a long idle interval can be a buffered state.
+            # Drain configurable warm-up reads, then save the requested ten.
+            for _ in range(args.discard_robot_reads):
+                read_robot_matrix(process)
+                if args.robot_sample_interval_ms > 0:
+                    time.sleep(args.robot_sample_interval_ms / 1000.0)
 
             matrices, timestamps_ns, durations_ns, representative_index = read_robot_pose_batch(
                 process,

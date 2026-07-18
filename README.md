@@ -83,10 +83,12 @@ python capture_hand_eye.py RIGHT_ROBOT_IP \
 ```
 
 保持棋盘格固定。每次让机械臂稳定且完整检测到角点后按Enter，同时保存图像和
-连续10次实测末端位姿；程序保留全部原始读数，并用SE(3)中位代表位姿降低旧缓存或
-偶发异常读数的影响。按Backspace删除最后一组，按`q`退出。采集期间不得有其他程序
+程序默认先预读并丢弃1次缓存状态，再连续保存10次实测末端位姿；程序保留全部原始
+读数，并用SE(3)中位代表位姿降低旧缓存或偶发异常读数的影响。按Backspace删除最后
+一组，按`q`退出。采集期间不得有其他程序
 占用同一Franka的libfranka/FCI连接。可通过`--robot-samples`和
-`--robot-sample-interval-ms`调整读取次数及间隔。
+`--robot-sample-interval-ms`调整读取次数及间隔，通过`--discard-robot-reads`调整
+预读丢弃次数。
 
 ### 4. 测量桌面中心
 
