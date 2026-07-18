@@ -99,6 +99,33 @@ python capture_hand_eye.py RIGHT_ROBOT_IP \
 - [ ] 检查不同观察姿态所得结果是否一致；
 - [ ] 保存桌面坐标系相对左右机械臂基坐标系的完整变换，而不只保存中心点。
 
+使用`tag36h11 ID 0`、黑色外边框实测120 mm时，左臂测量命令示例：
+
+```bash
+python measure_table_center.py LEFT_ROBOT_IP \
+  --device 0 --name left \
+  --intrinsics calibration_output/left_intrinsics.json \
+  --hand-eye calibration_output/left_hand_eye.json \
+  --tag-id 0 --tag-size 0.120 \
+  --output calibration_output/left_table_center.json \
+  --bridge build_franka_bridge_franka/franka_state_bridge
+```
+
+右臂：
+
+```bash
+python measure_table_center.py RIGHT_ROBOT_IP \
+  --device 4 --name right \
+  --intrinsics calibration_output/right_intrinsics.json \
+  --hand-eye calibration_output/right_hand_eye.json \
+  --tag-id 0 --tag-size 0.120 \
+  --output calibration_output/right_table_center.json \
+  --bridge build_franka_bridge_franka/franka_state_bridge
+```
+
+从至少5～10个不同相机姿态观察固定标签，每次检测稳定后按Enter。程序输出每次
+测量以及SE(3)中位汇总结果；按Backspace删除最后一次测量，按`q`退出。
+
 坐标变换链为：
 
 ```text
