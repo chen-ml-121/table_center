@@ -57,6 +57,35 @@
 - [ ] 保存左、右机械臂各自的手眼标定结果；
 - [ ] 用未参与标定的姿态验证手眼标定误差。
 
+#### Franka采集工具
+
+项目内的 `franka_bridge` 使用 `libfranka::Robot::readOnce()` 读取实测
+`O_T_EE`，并转换为行主序的 `base_T_EE` 4×4矩阵。先在安装了libfranka的
+Franka电脑上编译：
+
+```bash
+cmake -S franka_bridge -B build_franka_bridge
+cmake --build build_franka_bridge -j
+```
+
+采集左臂（将IP替换为实际值）：
+
+```bash
+python capture_hand_eye.py LEFT_ROBOT_IP \
+  --device 0 --name left --output hand_eye_data
+```
+
+采集右臂：
+
+```bash
+python capture_hand_eye.py RIGHT_ROBOT_IP \
+  --device 4 --name right --output hand_eye_data
+```
+
+保持棋盘格固定。每次让机械臂稳定且完整检测到角点后按Enter，同时保存图像和
+末端位姿；按Backspace删除最后一组，按`q`退出。采集期间不得有其他程序占用同一
+Franka的libfranka/FCI连接。
+
 ### 4. 测量桌面中心
 
 - [ ] 左机械臂从 5～10 个不同姿态观察完整标记板；

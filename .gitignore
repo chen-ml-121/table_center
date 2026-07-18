@@ -6,4 +6,4 @@ calibration_images/
 
 # Generated calibration results should be reviewed before versioning.
 calibration_output/
-
+build_franka_bridge/
