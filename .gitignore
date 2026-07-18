@@ -3,6 +3,8 @@ __pycache__/
 
 # Captured calibration datasets can be large and are machine-specific.
 calibration_images/
+*_hand_eye_data/
+hand_eye_data/
 
 # Calibration results are versioned after review; raw capture images stay ignored.
 build_franka_bridge/
