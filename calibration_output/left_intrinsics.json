@@ -1,0 +1,121 @@
+{
+  "camera_model": "opencv_fisheye",
+  "image_width": 1920,
+  "image_height": 1080,
+  "pattern_inner_corners": [
+    11,
+    8
+  ],
+  "square_size_m": 0.025,
+  "valid_images": 71,
+  "rejected_images": 10,
+  "opencv_rms_px": 0.4021453706870033,
+  "reprojection_rmse_px": 0.4021453706870031,
+  "K": [
+    [
+      355.05484407526734,
+      0.0,
+      961.4747373658031
+    ],
+    [
+      0.0,
+      355.29647783203154,
+      556.7157922761304
+    ],
+    [
+      0.0,
+      0.0,
+      1.0
+    ]
+  ],
+  "D": [
+    -0.05932738366248075,
+    -0.025702609295112748,
+    0.029472855045786176,
+    -0.010838079258032875
+  ],
+  "worst_views": [
+    {
+      "file": "calibration_left_images/left/left_009_1784370154203.png",
+      "rmse_px": 0.5612998567529582
+    },
+    {
+      "file": "calibration_left_images/left/left_008_1784370153081.png",
+      "rmse_px": 0.5557685943289046
+    },
+    {
+      "file": "calibration_left_images/left/left_012_1784370173878.png",
+      "rmse_px": 0.5492153139218627
+    },
+    {
+      "file": "calibration_left_images/left/left_011_1784370157424.png",
+      "rmse_px": 0.5451681966300643
+    },
+    {
+      "file": "calibration_left_images/left/left_010_1784370156394.png",
+      "rmse_px": 0.5421435668591503
+    },
+    {
+      "file": "calibration_left_images/left/left_027_1784370379050.png",
+      "rmse_px": 0.5342877155463992
+    },
+    {
+      "file": "calibration_left_images/left/left_071_1784370935026.png",
+      "rmse_px": 0.5333119073188065
+    },
+    {
+      "file": "calibration_left_images/left/left_007_1784370152563.png",
+      "rmse_px": 0.5298334134912034
+    },
+    {
+      "file": "calibration_left_images/left/left_069_1784370924645.png",
+      "rmse_px": 0.5256405483765075
+    },
+    {
+      "file": "calibration_left_images/left/left_068_1784370923240.png",
+      "rmse_px": 0.5114656516639718
+    }
+  ],
+  "rejected": [
+    {
+      "file": "calibration_left_images/left/left_020_1784370272029.png",
+      "reason": "corners_not_found"
+    },
+    {
+      "file": "calibration_left_images/left/left_072_1784370953659.png",
+      "reason": "corners_not_found"
+    },
+    {
+      "file": "calibration_left_images/left/left_059_1784370781138.png",
+      "reason": "ill_conditioned_view"
+    },
+    {
+      "file": "calibration_left_images/left/left_001_1784370106646.png",
+      "reason": "ill_conditioned_view"
+    },
+    {
+      "file": "calibration_left_images/left/left_003_1784370115207.png",
+      "reason": "ill_conditioned_view"
+    },
+    {
+      "file": "calibration_left_images/left/left_060_1784370782304.png",
+      "reason": "ill_conditioned_view"
+    },
+    {
+      "file": "calibration_left_images/left/left_061_1784370793381.png",
+      "reason": "ill_conditioned_view"
+    },
+    {
+      "file": "calibration_left_images/left/left_063_1784370805730.png",
+      "reason": "ill_conditioned_view"
+    },
+    {
+      "file": "calibration_left_images/left/left_000_1784370098304.png",
+      "reason": "ill_conditioned_view"
+    },
+    {
+      "file": "calibration_left_images/left/left_062_1784370801857.png",
+      "reason": "ill_conditioned_view"
+    }
+  ]
+}

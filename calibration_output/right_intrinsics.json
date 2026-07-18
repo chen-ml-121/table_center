@@ -1,0 +1,89 @@
+{
+  "camera_model": "opencv_fisheye",
+  "image_width": 1920,
+  "image_height": 1080,
+  "pattern_inner_corners": [
+    11,
+    8
+  ],
+  "square_size_m": 0.025,
+  "valid_images": 68,
+  "rejected_images": 2,
+  "opencv_rms_px": 0.3181289054351571,
+  "reprojection_rmse_px": 0.31812890543515704,
+  "K": [
+    [
+      350.2160645018963,
+      0.0,
+      980.1332269717094
+    ],
+    [
+      0.0,
+      350.0688232374028,
+      542.9025550033532
+    ],
+    [
+      0.0,
+      0.0,
+      1.0
+    ]
+  ],
+  "D": [
+    -0.06378808947237537,
+    0.004679214579390464,
+    -0.0033901686719655204,
+    0.0005081546265560295
+  ],
+  "worst_views": [
+    {
+      "file": "calibration_right_images/right/right_001_1784375208842.png",
+      "rmse_px": 0.6986538761074366
+    },
+    {
+      "file": "calibration_right_images/right/right_008_1784375222549.png",
+      "rmse_px": 0.42033398688306634
+    },
+    {
+      "file": "calibration_right_images/right/right_000_1784375207355.png",
+      "rmse_px": 0.4071607093239519
+    },
+    {
+      "file": "calibration_right_images/right/right_007_1784375222236.png",
+      "rmse_px": 0.4048590215249524
+    },
+    {
+      "file": "calibration_right_images/right/right_005_1784375219478.png",
+      "rmse_px": 0.3974378732392822
+    },
+    {
+      "file": "calibration_right_images/right/right_006_1784375219575.png",
+      "rmse_px": 0.39640019348114164
+    },
+    {
+      "file": "calibration_right_images/right/right_003_1784375213092.png",
+      "rmse_px": 0.38925418406820317
+    },
+    {
+      "file": "calibration_right_images/right/right_004_1784375214972.png",
+      "rmse_px": 0.37315996339840346
+    },
+    {
+      "file": "calibration_right_images/right/right_059_1784375732025.png",
+      "rmse_px": 0.37084147731887557
+    },
+    {
+      "file": "calibration_right_images/right/right_053_1784375661829.png",
+      "rmse_px": 0.3581171015826097
+    }
+  ],
+  "rejected": [
+    {
+      "file": "calibration_right_images/right/right_002_1784375210256.png",
+      "reason": "corners_not_found"
+    },
+    {
+      "file": "calibration_right_images/right/right_055_1784375721728.png",
+      "reason": "corners_not_found"
+    }
+  ]
+}
