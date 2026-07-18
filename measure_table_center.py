@@ -58,12 +58,19 @@ def tag_object_points(size):
 
 def fisheye_project(points, camera_T_object, K, D):
     rvec, _ = cv2.Rodrigues(camera_T_object[:3, :3])
+    object_points = np.ascontiguousarray(
+        np.asarray(points, dtype=np.float64).reshape(1, -1, 3)
+    )
+    rvec = np.ascontiguousarray(rvec, dtype=np.float64).reshape(3, 1)
+    tvec = np.ascontiguousarray(
+        camera_T_object[:3, 3], dtype=np.float64
+    ).reshape(3, 1)
     projected, _ = cv2.fisheye.projectPoints(
-        np.asarray(points, dtype=np.float64).reshape(1, -1, 3),
+        object_points,
         rvec,
-        camera_T_object[:3, 3].reshape(3, 1),
-        K,
-        D,
+        tvec,
+        np.ascontiguousarray(K, dtype=np.float64),
+        np.ascontiguousarray(D, dtype=np.float64),
     )
     return projected.reshape(-1, 2)
 
@@ -80,7 +87,7 @@ def estimate_tag_pose(corners, size, K, D):
         None,
         flags=cv2.SOLVEPNP_IPPE_SQUARE,
     )
-    if not success or float(tvec[2]) <= 0:
+    if not success or float(tvec.reshape(-1)[2]) <= 0:
         return None, None
     rotation, _ = cv2.Rodrigues(rvec)
     camera_T_tag = transform(rotation, tvec)
